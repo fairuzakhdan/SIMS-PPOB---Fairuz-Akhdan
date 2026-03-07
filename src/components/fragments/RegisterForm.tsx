@@ -1,0 +1,156 @@
+import { useForm } from 'react-hook-form';
+import { useNavigate, Link } from 'react-router-dom';
+import { MdAlternateEmail } from 'react-icons/md';
+import { AiOutlineLock, AiOutlineUser, AiOutlineClose } from 'react-icons/ai';
+import { useState } from 'react';
+import Input from '../elements/Input';
+import Button from '../elements/Button';
+import { authService } from '../../services/authService';
+import type { RegisterRequest } from '../../types/auth';
+
+interface RegisterFormData extends RegisterRequest {
+  confirm_password: string;
+}
+
+export default function RegisterForm() {
+  const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<RegisterFormData>();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setErrorMessage('');
+    if (data.password !== data.confirm_password) {
+      setErrorMessage('Password tidak sama');
+      return;
+    }
+
+    try {
+      const { confirm_password, ...registerData } = data;
+      const response = await authService.register(registerData);
+      if (response.status === 0) {
+        setSuccessMessage('Registrasi berhasil! Silahkan login');
+        setTimeout(() => navigate('/login'), 2000);
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Registrasi gagal';
+      setError('root', { message });
+      setErrorMessage(message);
+    }
+  };
+
+  const handleFormError = () => {
+    if (errors.email) {
+      setErrorMessage(errors.email.message || 'Email tidak valid');
+    } else if (errors.first_name) {
+      setErrorMessage(errors.first_name.message || 'Nama depan wajib diisi');
+    } else if (errors.last_name) {
+      setErrorMessage(errors.last_name.message || 'Nama belakang wajib diisi');
+    } else if (errors.password) {
+      setErrorMessage(errors.password.message || 'Password tidak valid');
+    } else if (errors.confirm_password) {
+      setErrorMessage(errors.confirm_password.message || 'Konfirmasi password wajib diisi');
+    }
+  };
+
+  return (
+    <>
+      <div className="w-full">
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Lengkapi data untuk<br />membuat akun
+          </h2>
+        </div>
+        
+        <form onSubmit={handleSubmit(onSubmit, handleFormError)}>
+          <Input
+            type="email"
+            placeholder="masukan email anda"
+            icon={<MdAlternateEmail size={18} />}
+            {...register('email', {
+              required: 'Email wajib diisi',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Parameter email tidak sesuai format',
+              },
+            })}
+            error={errors.email?.message}
+          />
+
+          <Input
+            type="text"
+            placeholder="nama depan"
+            icon={<AiOutlineUser size={18} />}
+            {...register('first_name', { required: 'Nama depan wajib diisi' })}
+            error={errors.first_name?.message}
+          />
+
+          <Input
+            type="text"
+            placeholder="nama belakang"
+            icon={<AiOutlineUser size={18} />}
+            {...register('last_name', { required: 'Nama belakang wajib diisi' })}
+            error={errors.last_name?.message}
+          />
+
+          <Input
+            type="password"
+            placeholder="buat password"
+            icon={<AiOutlineLock size={18} />}
+            {...register('password', {
+              required: 'Password wajib diisi',
+              minLength: {
+                value: 8,
+                message: 'Password minimal 8 karakter',
+              },
+            })}
+            error={errors.password?.message}
+          />
+
+          <Input
+            type="password"
+            placeholder="konfirmasi password"
+            icon={<AiOutlineLock size={18} />}
+            {...register('confirm_password', { required: 'Konfirmasi password wajib diisi' })}
+            error={errors.confirm_password?.message}
+          />
+
+          <Button type="submit" className="mt-3">Registrasi</Button>
+
+          <p className="text-center text-gray-600 text-xs mt-4">
+            sudah punya akun? login{' '}
+            <Link to="/login" className="text-red-500 font-semibold hover:text-red-600">
+              di sini
+            </Link>
+          </p>
+        </form>
+      </div>
+
+      {errorMessage && (
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-md px-2 py-1.5">
+          <span className="text-red-600" style={{ fontSize: '10px' }}>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage('')}
+            className="text-red-600 hover:text-red-800 ml-2"
+          >
+            <AiOutlineClose size={12} />
+          </button>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-green-50 border border-green-200 rounded-md px-2 py-1.5">
+          <span className="text-green-600" style={{ fontSize: '10px' }}>{successMessage}</span>
+          <button
+            type="button"
+            onClick={() => setSuccessMessage('')}
+            className="text-green-600 hover:text-green-800 ml-2"
+          >
+            <AiOutlineClose size={12} />
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
