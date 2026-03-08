@@ -123,7 +123,7 @@ const TransactionList = () => {
         </div>
       ) : (
         <>
-          <div className="space-y-2 md:space-y-3">
+          <div className="space-y-2 md:space-y-3 max-h-[500px] overflow-y-auto pr-2">
             {filteredTransactions.map((transaction) => (
               <TransactionCard key={transaction.invoice_number} transaction={transaction} />
             ))}
