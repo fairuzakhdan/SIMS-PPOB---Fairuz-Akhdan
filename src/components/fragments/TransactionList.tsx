@@ -8,28 +8,49 @@ import type { Transaction } from "../../types/transaction";
 const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<string>("November");
-
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 5;
+  
   const fixedMonths = ["November", "Desember", "Januari", "Februari", "Maret", "April"];
+  const currentMonth = format(new Date(), "MMMM", { locale: id });
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    fixedMonths.includes(currentMonth) ? currentMonth : fixedMonths[0]
+  );
+
+  const fetchTransactions = async (currentOffset: number, reset: boolean = false) => {
+    try {
+      const response = await api.get("/transaction/history", {
+        params: { limit, offset: currentOffset }
+      });
+      console.log("Transaction response:", response.data);
+      const records = response.data.data?.records || [];
+      
+      if (reset) {
+        setTransactions(records);
+      } else {
+        setTransactions(prev => [...prev, ...records]);
+      }
+      
+      setHasMore(records.length === limit);
+    } catch (error) {
+      console.error("Failed to fetch transactions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await api.get("/transaction/history", {
-          params: { limit: 100, offset: 0 }
-        });
-        console.log("Transaction response:", response.data);
-        const records = response.data.data?.records || [];
-        setTransactions(records);
-      } catch (error) {
-        console.error("Failed to fetch transactions:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTransactions();
+    setLoading(true);
+    setOffset(0);
+    fetchTransactions(0, true);
   }, []);
+
+  const handleShowMore = () => {
+    const newOffset = offset + limit;
+    setOffset(newOffset);
+    fetchTransactions(newOffset, false);
+  };
 
   // Filter transactions by selected month
   const filteredTransactions = transactions.filter(t => 
@@ -76,8 +97,6 @@ const TransactionList = () => {
     );
   }
 
-  const displayedTransactions = showAll ? filteredTransactions : filteredTransactions.slice(0, 5);
-
   return (
     <div>
       {/* Month Tabs */}
@@ -85,10 +104,7 @@ const TransactionList = () => {
         {fixedMonths.map((month) => (
           <button
             key={month}
-            onClick={() => {
-              setSelectedMonth(month);
-              setShowAll(false);
-            }}
+            onClick={() => setSelectedMonth(month)}
             className={`text-xs md:text-sm whitespace-nowrap transition-colors ${
               selectedMonth === month
                 ? "text-black font-semibold"
@@ -107,16 +123,16 @@ const TransactionList = () => {
         </div>
       ) : (
         <>
-          <div className={`space-y-2 md:space-y-3 ${showAll ? 'max-h-[500px] overflow-y-auto pr-2' : ''}`}>
-            {displayedTransactions.map((transaction) => (
+          <div className="space-y-2 md:space-y-3">
+            {filteredTransactions.map((transaction) => (
               <TransactionCard key={transaction.invoice_number} transaction={transaction} />
             ))}
           </div>
           
-          {!showAll && filteredTransactions.length > 5 && (
+          {hasMore && (
             <div className="text-center mt-4">
               <button
-                onClick={() => setShowAll(true)}
+                onClick={handleShowMore}
                 className="text-xs md:text-sm text-red-500 font-semibold hover:text-red-600"
               >
                 Show more
