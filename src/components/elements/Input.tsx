@@ -34,6 +34,9 @@ export default function Input({ icon, error, className = '', type, ...props }: I
           </button>
         )}
       </div>
+      {error && (
+        <p className="text-xs text-red-500 mt-1 text-right">{error}</p>
+      )}
     </div>
   );
 }

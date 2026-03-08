@@ -19,7 +19,7 @@ export default function LoginForm() {
       const response = await authService.login(data);
       if (response.status === 0) {
         localStorage.setItem('token', response.data.token);
-        navigate('/dashboard');
+        window.location.href = '/';
       }
     } catch (error: any) {
       const message = error.response?.data?.message || 'Login gagal';

@@ -1,4 +1,4 @@
-# SIMS PPOB - Fairuz Akhdan
+# SIMS PPOB - FAIRUZ AKHDAN
 
 Aplikasi PPOB (Payment Point Online Bank) dengan fitur login dan registrasi.
 

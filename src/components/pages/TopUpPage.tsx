@@ -1,10 +1,9 @@
 import Navbar from "../fragments/Navbar";
 import ProfileCard from "../elements/ProfileCard";
 import BalanceCard from "../elements/BalanceCard";
-import ServiceList from "../fragments/ServiceList";
-import BannerList from "../fragments/BannerList";
+import TopUpForm from "../fragments/TopUpForm";
 
-export default function DashboardPage() {
+export default function TopUpPage() {
   return (
     <div>
       <Navbar />
@@ -14,8 +13,7 @@ export default function DashboardPage() {
           <BalanceCard />
         </div>
         
-        <ServiceList />
-        <BannerList />
+        <TopUpForm />
       </div>
     </div>
   );

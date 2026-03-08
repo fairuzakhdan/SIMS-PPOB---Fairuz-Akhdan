@@ -1,10 +1,9 @@
 import Navbar from "../fragments/Navbar";
 import ProfileCard from "../elements/ProfileCard";
 import BalanceCard from "../elements/BalanceCard";
-import ServiceList from "../fragments/ServiceList";
-import BannerList from "../fragments/BannerList";
+import TransactionList from "../fragments/TransactionList";
 
-export default function DashboardPage() {
+export default function TransactionPage() {
   return (
     <div>
       <Navbar />
@@ -14,8 +13,10 @@ export default function DashboardPage() {
           <BalanceCard />
         </div>
         
-        <ServiceList />
-        <BannerList />
+        <div className="mt-6 md:mt-8">
+          <h2 className="text-base md:text-lg font-semibold mb-4">Semua Transaksi</h2>
+          <TransactionList />
+        </div>
       </div>
     </div>
   );

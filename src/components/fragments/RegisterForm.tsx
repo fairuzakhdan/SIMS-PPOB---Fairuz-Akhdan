@@ -14,14 +14,13 @@ interface RegisterFormData extends RegisterRequest {
 
 export default function RegisterForm() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<RegisterFormData>();
-  const [errorMessage, setErrorMessage] = useState('');
+  const { register, handleSubmit, formState: { errors }, watch, setError } = useForm<RegisterFormData>();
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onSubmit = async (data: RegisterFormData) => {
     setErrorMessage('');
     if (data.password !== data.confirm_password) {
-      setErrorMessage('Password tidak sama');
       return;
     }
 
@@ -39,30 +38,16 @@ export default function RegisterForm() {
     }
   };
 
-  const handleFormError = () => {
-    if (errors.email) {
-      setErrorMessage(errors.email.message || 'Email tidak valid');
-    } else if (errors.first_name) {
-      setErrorMessage(errors.first_name.message || 'Nama depan wajib diisi');
-    } else if (errors.last_name) {
-      setErrorMessage(errors.last_name.message || 'Nama belakang wajib diisi');
-    } else if (errors.password) {
-      setErrorMessage(errors.password.message || 'Password tidak valid');
-    } else if (errors.confirm_password) {
-      setErrorMessage(errors.confirm_password.message || 'Konfirmasi password wajib diisi');
-    }
-  };
-
   return (
     <>
-      <div className="w-full">
+      <div className="w-full mb-12">
         <div className="text-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
             Lengkapi data untuk<br />membuat akun
           </h2>
         </div>
         
-        <form onSubmit={handleSubmit(onSubmit, handleFormError)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             type="email"
             placeholder="masukan email anda"
@@ -111,7 +96,10 @@ export default function RegisterForm() {
             type="password"
             placeholder="konfirmasi password"
             icon={<AiOutlineLock size={18} />}
-            {...register('confirm_password', { required: 'Konfirmasi password wajib diisi' })}
+            {...register('confirm_password', {
+              required: 'Konfirmasi password wajib diisi',
+              validate: (value) => value === watch('password') || 'Password tidak sama',
+            })}
             error={errors.confirm_password?.message}
           />
 
@@ -126,19 +114,6 @@ export default function RegisterForm() {
         </form>
       </div>
 
-      {errorMessage && (
-        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-md px-2 py-1.5">
-          <span className="text-red-600" style={{ fontSize: '10px' }}>{errorMessage}</span>
-          <button
-            type="button"
-            onClick={() => setErrorMessage('')}
-            className="text-red-600 hover:text-red-800 ml-2"
-          >
-            <AiOutlineClose size={12} />
-          </button>
-        </div>
-      )}
-
       {successMessage && (
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-green-50 border border-green-200 rounded-md px-2 py-1.5">
           <span className="text-green-600" style={{ fontSize: '10px' }}>{successMessage}</span>
@@ -146,6 +121,19 @@ export default function RegisterForm() {
             type="button"
             onClick={() => setSuccessMessage('')}
             className="text-green-600 hover:text-green-800 ml-2"
+          >
+            <AiOutlineClose size={12} />
+          </button>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-md px-2 py-1.5">
+          <span className="text-red-600" style={{ fontSize: '10px' }}>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage('')}
+            className="text-red-600 hover:text-red-800 ml-2"
           >
             <AiOutlineClose size={12} />
           </button>
