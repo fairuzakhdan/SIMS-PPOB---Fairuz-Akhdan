@@ -5,6 +5,7 @@ import DashboardPage from './components/pages/DashboardPage';
 import TopUpPage from './components/pages/TopUpPage';
 import PurchasePage from './components/pages/PurchasePage';
 import TransactionPage from './components/pages/TransactionPage';
+import AccountPage from './components/pages/AccountPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 
 function App() {
@@ -36,6 +37,10 @@ function App() {
         <Route 
           path="/transaction" 
           element={isAuthenticated ? <TransactionPage /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path="/account" 
+          element={isAuthenticated ? <AccountPage /> : <Navigate to="/login" replace />} 
         />
         <Route path="*" element={isAuthenticated ? <NotFoundPage /> : <Navigate to="/login" replace />} />
       </Routes>

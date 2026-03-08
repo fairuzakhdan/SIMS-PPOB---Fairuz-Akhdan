@@ -19,7 +19,7 @@ const Navbar = () => {
             <Link to="/transaction" className="text-gray-700 hover:text-red-500 font-medium">
               Transaction
             </Link>
-            <Link to="/akun" className="text-gray-700 hover:text-red-500 font-medium">
+            <Link to="/account" className="text-gray-700 hover:text-red-500 font-medium">
               Akun
             </Link>
           </div>
@@ -68,7 +68,7 @@ const Navbar = () => {
               Transaction
             </Link>
             <Link
-              to="/akun"
+              to="/account"
               onClick={() => setIsOpen(false)}
               className="text-gray-700 hover:text-red-500 font-medium"
             >
