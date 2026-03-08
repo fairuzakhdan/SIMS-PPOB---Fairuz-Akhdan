@@ -9,9 +9,9 @@ const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<string>("Oktober");
+  const [selectedMonth, setSelectedMonth] = useState<string>("November");
 
-  const fixedMonths = ["Oktober", "November", "Desember", "Januari", "Februari", "Maret", "April"];
+  const fixedMonths = ["November", "Desember", "Januari", "Februari", "Maret", "April"];
 
   useEffect(() => {
     const fetchTransactions = async () => {
