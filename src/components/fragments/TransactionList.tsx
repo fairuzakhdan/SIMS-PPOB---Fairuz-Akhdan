@@ -23,7 +23,6 @@ const TransactionList = () => {
       const response = await api.get("/transaction/history", {
         params: { limit, offset: currentOffset }
       });
-      console.log("Transaction response:", response.data);
       const records = response.data.data?.records || [];
       
       if (reset) {

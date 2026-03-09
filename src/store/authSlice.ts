@@ -15,18 +15,28 @@ const initialState: AuthState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (credentials: { email: string; password: string }) => {
-    const response = await api.post('/login', credentials);
-    const token = response.data.data.token;
-    localStorage.setItem('token', token);
-    return token;
+  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/login', credentials);
+      const token = response.data.data.token;
+      localStorage.setItem('token', token);
+      return token;
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Login gagal';
+      return rejectWithValue(message);
+    }
   }
 );
 
 export const register = createAsyncThunk(
   'auth/register',
-  async (data: { email: string; first_name: string; last_name: string; password: string }) => {
-    await api.post('/registration', data);
+  async (data: { email: string; first_name: string; last_name: string; password: string }, { rejectWithValue }) => {
+    try {
+      await api.post('/registration', data);
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Registrasi gagal';
+      return rejectWithValue(message);
+    }
   }
 );
 

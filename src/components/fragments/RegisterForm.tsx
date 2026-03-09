@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { MdAlternateEmail } from 'react-icons/md';
 import { AiOutlineLock, AiOutlineUser, AiOutlineClose } from 'react-icons/ai';
 import { useState } from 'react';
+import { useAppDispatch } from '../../store/hooks';
+import { register as registerAction } from '../../store/authSlice';
 import Input from '../elements/Input';
 import Button from '../elements/Button';
-import { authService } from '../../services/authService';
 import type { RegisterRequest } from '../../types/auth';
 
 interface RegisterFormData extends RegisterRequest {
@@ -14,9 +15,11 @@ interface RegisterFormData extends RegisterRequest {
 
 export default function RegisterForm() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { register, handleSubmit, formState: { errors }, watch, setError } = useForm<RegisterFormData>();
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: RegisterFormData) => {
     setErrorMessage('');
@@ -24,17 +27,18 @@ export default function RegisterForm() {
       return;
     }
 
+    setLoading(true);
     try {
       const { confirm_password, ...registerData } = data;
-      const response = await authService.register(registerData);
-      if (response.status === 0) {
-        setSuccessMessage('Registrasi berhasil! Silahkan login');
-        setTimeout(() => navigate('/login'), 2000);
-      }
+      await dispatch(registerAction(registerData)).unwrap();
+      setSuccessMessage('Registrasi berhasil! Silahkan login');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Registrasi gagal';
+      const message = typeof error === 'string' ? error : 'Registrasi gagal';
       setError('root', { message });
       setErrorMessage(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,7 +107,9 @@ export default function RegisterForm() {
             error={errors.confirm_password?.message}
           />
 
-          <Button type="submit" className="mt-3">Registrasi</Button>
+          <Button type="submit" disabled={loading} className="mt-3">
+            {loading ? 'Loading...' : 'Registrasi'}
+          </Button>
 
           <p className="text-center text-gray-600 text-xs mt-4">
             sudah punya akun? login{' '}

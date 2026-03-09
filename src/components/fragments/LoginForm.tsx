@@ -3,28 +3,31 @@ import { useNavigate, Link } from 'react-router-dom';
 import { MdAlternateEmail } from 'react-icons/md';
 import { AiOutlineLock, AiOutlineClose } from 'react-icons/ai';
 import { useState } from 'react';
+import { useAppDispatch } from '../../store/hooks';
+import { login } from '../../store/authSlice';
 import Input from '../elements/Input';
 import Button from '../elements/Button';
-import { authService } from '../../services/authService';
 import type { LoginRequest } from '../../types/auth';
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginRequest>();
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: LoginRequest) => {
     setErrorMessage('');
+    setLoading(true);
     try {
-      const response = await authService.login(data);
-      if (response.status === 0) {
-        localStorage.setItem('token', response.data.token);
-        window.location.href = '/';
-      }
+      await dispatch(login(data)).unwrap();
+      navigate('/');
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login gagal';
+      const message = typeof error === 'string' ? error : 'Login gagal';
       setError('root', { message });
       setErrorMessage(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,7 +77,9 @@ export default function LoginForm() {
             error={errors.password?.message}
           />
 
-          <Button type="submit" className="mt-4">Masuk</Button>
+          <Button type="submit" disabled={loading} className="mt-4">
+            {loading ? 'Loading...' : 'Masuk'}
+          </Button>
 
           <p className="text-center text-gray-600 text-sm mt-6">
             belum punya akun? registrasi{' '}
