@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../store/hooks';
 import { fetchBalance } from '../../store/balanceSlice';
 import MainLayout from '../layouts/MainLayout';
@@ -13,7 +13,6 @@ import type { Service } from '../../types/service';
 
 export default function PurchasePage() {
   const { serviceCode } = useParams();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);

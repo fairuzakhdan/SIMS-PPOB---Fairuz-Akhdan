@@ -1,73 +1,147 @@
-# React + TypeScript + Vite
+# SIMS PPOB - Fairuz Akhdan
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi web untuk sistem pembayaran online (PPOB) yang dibangun dengan React + TypeScript + Vite dan Redux Toolkit untuk state management.
 
-Currently, two official plugins are available:
+## 🚀 Fitur
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Authentication**
+  - Registrasi akun baru
+  - Login dengan validasi
+  - Logout dengan clear session
 
-## React Compiler
+- **Profile Management**
+  - Lihat profile user
+  - Update data profile (nama depan & belakang)
+  - Update profile picture (max 100KB)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Saldo & Transaksi**
+  - Lihat saldo (toggle show/hide, persistent)
+  - Top up saldo (min 10.000, max 1.000.000)
+  - Pembayaran layanan
+  - Riwayat transaksi dengan pagination
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend Framework:** React 19 + TypeScript
+- **Build Tool:** Vite
+- **State Management:** Redux Toolkit
+- **Routing:** React Router v7
+- **Form Handling:** React Hook Form
+- **HTTP Client:** Axios
+- **Styling:** Tailwind CSS
+- **Icons:** React Icons
+- **Date Formatting:** date-fns
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📁 Struktur Project
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── elements/        # Komponen reusable (Button, Input, Card, dll)
+│   ├── fragments/       # Komponen fragment (Form, List, dll)
+│   ├── layouts/         # Layout wrapper (AuthLayout, MainLayout)
+│   └── pages/           # Halaman utama
+├── store/               # Redux store & slices
+│   ├── authSlice.ts     # Auth state management
+│   ├── profileSlice.ts  # Profile state management
+│   ├── balanceSlice.ts  # Balance state management
+│   ├── hooks.ts         # Typed Redux hooks
+│   └── index.ts         # Store configuration
+├── services/            # API services
+├── types/               # TypeScript types
+└── assets/              # Images & static files
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔧 Installation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone repository
+```bash
+git clone <repository-url>
+cd sims-ppob-fairuz-akhdan
 ```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Run development server
+```bash
+npm run dev
+```
+
+4. Build for production
+```bash
+npm run build
+```
+
+## 🎯 Redux State Management
+
+### Auth Slice
+- **State:** `token`, `isAuthenticated`, `loading`
+- **Actions:** `login()`, `register()`, `logout()`
+- **Usage:** Authentication flow, protected routing
+
+### Profile Slice
+- **State:** `data` (user profile), `loading`, `error`
+- **Actions:** `fetchProfile()`, `updateProfile()`, `updateProfileImage()`, `clearProfile()`
+- **Usage:** Display & update user information
+
+### Balance Slice
+- **State:** `amount`, `showBalance`, `loading`, `error`
+- **Actions:** `fetchBalance()`, `toggleShowBalance()`, `clearBalance()`
+- **Usage:** Display balance, auto-refresh after transactions
+
+## 📝 Validasi Form
+
+Semua form menggunakan **React Hook Form** dengan validasi:
+- Email: Format email valid
+- Password: Minimal 8 karakter
+- Nama: Required fields
+- Top Up: Min 10.000, Max 1.000.000
+- Profile Image: Max 100KB, format JPEG/PNG
+
+## 🔐 API Integration
+
+Base URL: `https://take-home-test-api.nutech-integrasi.com`
+
+### Endpoints:
+- `POST /registration` - Registrasi user
+- `POST /login` - Login user
+- `GET /profile` - Get profile data
+- `PUT /profile/update` - Update profile data
+- `PUT /profile/image` - Update profile image
+- `GET /balance` - Get balance
+- `POST /topup` - Top up balance
+- `GET /services` - Get service list
+- `POST /transaction` - Create transaction
+- `GET /transaction/history` - Get transaction history
+- `GET /banner` - Get banner list
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Breakpoints: `md` (768px)
+- Responsive navbar dengan hamburger menu
+- Adaptive text & image sizes
+
+## ✨ Best Practices
+
+- ✅ Redux Toolkit untuk state management
+- ✅ TypeScript untuk type safety
+- ✅ Component-based architecture
+- ✅ Reusable components
+- ✅ Centralized API handling
+- ✅ Error handling & notifications
+- ✅ Loading states
+- ✅ Form validation
+- ✅ Protected routes
+- ✅ Clean code structure
+
+## 👨‍💻 Developer
+
+**Fairuz Akhdan**
+
+---
+
+Built with ❤️ using React + TypeScript + Redux Toolkit
