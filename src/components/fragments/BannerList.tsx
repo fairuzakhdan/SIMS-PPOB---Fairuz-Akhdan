@@ -45,7 +45,7 @@ const BannerList = () => {
 
   const handleScroll = () => {
     if (!scrollRef.current || banners.length === 0) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    const { scrollLeft, scrollWidth } = scrollRef.current;
     const itemWidth = scrollWidth / 3; // Total width divided by 3 sets (original + 2 duplicates)
 
     if (scrollLeft >= itemWidth * 2) {
