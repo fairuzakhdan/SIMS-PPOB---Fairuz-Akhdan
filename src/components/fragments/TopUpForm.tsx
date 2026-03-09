@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useAppDispatch } from "../../store/hooks";
+import { fetchBalance } from "../../store/balanceSlice";
 import api from "../../services/api";
 import ConfirmModal from "../elements/ConfirmModal";
 import ResultModal from "../elements/ResultModal";
 
 const TopUpForm = () => {
+  const dispatch = useAppDispatch();
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,7 +27,7 @@ const TopUpForm = () => {
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\./g, ""); // Remove dots
+    const value = e.target.value.replace(/\./g, "");
     if (value === "" || /^\d+$/.test(value)) {
       setAmount(value);
       setError("");
@@ -59,9 +62,10 @@ const TopUpForm = () => {
     setSubmittedAmount(Number(amount));
     setLoading(true);
     try {
-      const response = await api.post("/topup", {
+      await api.post("/topup", {
         top_up_amount: Number(amount),
       });
+      dispatch(fetchBalance());
       setModalStatus("success");
       setModalMessage("");
       setAmount("");

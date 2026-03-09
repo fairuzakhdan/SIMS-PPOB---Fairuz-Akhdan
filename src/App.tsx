@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppSelector } from './store/hooks';
 import LoginPage from './components/pages/LoginPage';
 import RegisterPage from './components/pages/RegisterPage';
 import DashboardPage from './components/pages/DashboardPage';
@@ -9,7 +10,7 @@ import AccountPage from './components/pages/AccountPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem('token');
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   return (
     <BrowserRouter>

@@ -8,8 +8,8 @@ interface LogoProps {
 const Logo = ({ clickable = true }: LogoProps) => {
   const content = (
     <>
-      <img src={logoImg} alt="SIMS PPOB Logo" className="h-8" />
-      <span className="font-semibold text-lg">SIMS PPOB - FAIRUZ AKHDAN</span>
+      <img src={logoImg} alt="SIMS PPOB Logo" className="h-7 md:h-8" />
+      <span className="font-semibold text-base md:text-lg">SIMS PPOB - FAIRUZ AKHDAN</span>
     </>
   );
 

@@ -1,30 +1,17 @@
-import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchProfile } from "../../store/profileSlice";
 import profileDefaultImg from "../../assets/images/Profile Photo.png";
 
-interface ProfileData {
-  first_name: string;
-  last_name: string;
-  profile_image: string;
-}
-
 const ProfileCard = () => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { data: profile, loading } = useAppSelector((state) => state.profile);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get("/profile");
-        setProfile(response.data.data);
-      } catch (error) {
-        console.error("Failed to fetch profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
+    if (!profile) {
+      dispatch(fetchProfile());
+    }
+  }, [dispatch, profile]);
 
   const getProfileImage = () => {
     if (!profile?.profile_image || profile.profile_image.includes("/null")) {

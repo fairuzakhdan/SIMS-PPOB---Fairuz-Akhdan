@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchBalance, toggleShowBalance } from "../../store/balanceSlice";
 import bgSaldo from "../../assets/images/Background Saldo.png";
 
 const BalanceCard = () => {
-  const [balance, setBalance] = useState<number | null>(null);
-  const [showBalance, setShowBalance] = useState(false);
+  const dispatch = useAppDispatch();
+  const { amount: balance, showBalance } = useAppSelector((state) => state.balance);
 
   useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const response = await api.get("/balance");
-        setBalance(response.data.data.balance);
-      } catch (error) {
-        console.error("Failed to fetch balance:", error);
-      }
-    };
-    fetchBalance();
-  }, []);
+    if (balance === null) {
+      dispatch(fetchBalance());
+    }
+  }, [dispatch, balance]);
 
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -40,7 +35,7 @@ const BalanceCard = () => {
       <div className="flex items-center gap-2">
         <span className="text-xs md:text-sm">{showBalance ? "Tutup saldo" : "Lihat saldo"}</span>
         <button 
-          onClick={() => setShowBalance(!showBalance)}
+          onClick={() => dispatch(toggleShowBalance())}
           className="appearance-none bg-transparent border-0 p-0 cursor-pointer flex items-center"
         >
           {showBalance ? (
